@@ -30,6 +30,7 @@ Changes to the notes, newest first. Older history: WORKLOG.md, worklog/ (before 
 ```
 
 - The first entry of a new `LOG.md` points to the older logs of the repo (CHANGES.md, WORKLOG.md, `worklog/`, `logs/`, `log/`, STATUS.md history). They stay where they are as history; nothing is moved or rewritten.
+- `.gitattributes` holds `LOG.md merge=union`, so two branches that each add bullets merge without a conflict. After such a merge, check that the bullets of one day sit under one heading.
 - Name each change by its content ("replaced the Ore hypothesis"), never by a task or round number.
 - Per-worker audit reports and quick captures are not the log; they may stay in `logs/` or `log/`, and `LOG.md` records only the changes made to the notes.
 

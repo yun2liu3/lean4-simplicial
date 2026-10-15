@@ -1,1 +1,2 @@
+@AGENTS.md
 @NOTES-GUIDE.md

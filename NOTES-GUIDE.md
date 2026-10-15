@@ -6,6 +6,8 @@ How notes are written and logged in this repo. Claudia is a mathematician; the n
 
 Instructions in every research repo have one layout: `AGENTS.md` is the entry for every agent, whatever its engine, and names this guide and the repo's own rule files (conventions, README, status, briefs); `CLAUDE.md` holds only `@` lines that load them (`@AGENTS.md`, `@NOTES-GUIDE.md`, and a rule file it must always see). Rules live in one place; a new rule file gets a line in `AGENTS.md`.
 
+When two instructions differ, the first of these wins: Claudia's words in the session, the hard rules at the top of `AGENTS.md`, the todo brief, this repo's own files (its `AGENTS.md`, conventions, briefs), this guide, and last the global defaults (such as `~/.claude/rules/latex.md`, whose page layout and colours `notes-style.sty` replaces for notes).
+
 ## 1. Organise by content
 
 - **Notes Claudia reads are LaTeX (`.tex`); Markdown is only for logs and plumbing.** Notes: topic notes, meeting notes, surveys, reading notes, reports and checks written for her. Markdown: `LOG.md` and other logs, agent briefs, reviews, audit reports and hand-offs, README, CLAUDE.md, AGENTS.md, conventions and plans, and text meant for pasting (a WhatsApp message). One version of each note: no `.md` twin beside a `.tex`.
@@ -18,7 +20,9 @@ Instructions in every research repo have one layout: `AGENTS.md` is the entry fo
 
 ## 2. The log: `LOG.md` at the repo root
 
-One format in every repo. Dated entries, newest first. A date heading `## YYYY-MM-DD`, then one bullet per change: `file or section: what changed (why)`. Add a bullet in the same commit as the change; a second change on the same day goes under that day's heading, not a new one. Do not edit old entries, except to fix a wrong path. Rules or conventions of this repo (its CLAUDE.md, AGENTS.md or conventions file) come on top of this guide; where they differ, the repo's own file wins.
+One format in every repo. Dated entries, newest first. A date heading `## YYYY-MM-DD`, then one bullet per change: `file or section: what changed (why)`. Add the bullet when you make the change; a second change on the same day goes under that day's heading, not a new one. Do not edit old entries, except to fix a wrong path.
+
+**Committing (Claudia's decision a100, 2026-10-15).** You may commit and push your own `LOG.md` bullets without asking, in a commit that holds nothing else (stage only your lines: `git add -p LOG.md`). The change a bullet describes stays uncommitted until Claudia asks, like everything else in the repo. A push that would carry anyone's earlier unpushed commits waits for her.
 
 ```
 # Log
@@ -38,16 +42,33 @@ Changes to the notes, newest first. Older history: WORKLOG.md, worklog/ (before 
 
 ## 3. LaTeX essentials
 
-- **Every note uses the shared style `notes-style.sty`** at the repo root (copied from aisystem like this guide; never edit it here). It sets the fonts, margins, spacing, theorem environments, colours, `\N \Z \Q \R \C`, and the marks of section 4. A note starts:
+- **Every note uses the shared style `notes-style.sty`** at the repo root (copied from aisystem like this guide; never edit it here). It gives every note the same look, the one of the categorification note for Ben: Palatino, a narrow text block with indented paragraphs, small-caps headings and theorem heads in one accent colour, a bar beside theorems, a washed summary box. It also defines the theorem environments, `\N \Z \Q \R \C` and the marks of section 4. Macros of this repo come after the `\usepackage` line; do not reload a package the style loads. A figure is `standalone`. Papers, and book annotations that live in the book's own source, keep their own preamble.
+- **Every note follows one template.** The structure is part of the look: the style cannot make bold run-in labels look like theorems.
 
 ```latex
 \documentclass[11pt,a4paper]{article}
 \makeatletter\def\input@path{{./}{../}{../../}{../../../}}\makeatother
 \usepackage{notes-style}
-\title{Content title}\author{Yun Liu}\date{2026-10-15}
+% this note's macros
+\title{Content title}\author{Yun Liu}\date{15 October 2026}
+\notekind{Working note}          % or: Meeting notes, Reading notes, Literature map, Changelog, Talk notes
+\runninghead{Short title}        % when the title is long
+\begin{document}
+\maketitle
+\begin{summarybox}               % always first: what the note establishes, in 3-6 lines or bullets
+  ... the main results, each with a \cref to where it is proved.
+\end{summarybox}
+\NoteStatus{proved | checked in ... | conjecture | survey}   % when the note states results
+\section{...}                    % numbered sections; \section* only for References
+\begin{definition}...\end{definition}   % statements are environments, never \textbf{Definition.}
+\begin{theorem}[Author, Year, Thm 3.4]...\end{theorem}
+\begin{proof}...\end{proof}      % or \begin{proof}[Proof sketch]
+\end{document}
 ```
 
-  Then `\maketitle`, and `\NoteStatus{...}` when the note is a result (proved, checked in ..., conjecture). Macros of this repo come after the `\usepackage` line; do not reload a package the style loads. A figure is `standalone`. Papers, and book annotations that live in the book's own source, keep their own preamble.
+  - Environments: `theorem proposition lemma corollary conjecture definition construction question` (accent heads), `example remark warning computation` (italic heads), `proof`; `intuition` for an explanation or picture added to a statement; `errornote gapnote opennote` for a longer error, filled gap or open question (the short marks are in section 4). Paragraph labels that are not statements (`Conventions.`, `Setup.`) are `\emph{...}` run-ins.
+  - **Meeting notes:** `\notekind{Meeting notes}`, title by content, the date of the meeting in `\date`, the people in `\author`. The summary box is titled `[Decisions and next steps]`. Sections: what was discussed (one per topic), claims made (tentative ones marked), next steps with who does what.
+  - **Literature maps, changelogs:** the same header and summary box; tables with `booktabs` (`longtable` for long ones).
 - A long note puts each section in its own file, pulled in with `\input{section}` (or subfiles, if the repo already uses them).
 - Words in math go in `\text{if } x>0`, never `\mathrm{if}`.
 - Fractions: `\dfrac` in a display, `\tfrac` inline, never bare `\frac` inline.
@@ -72,7 +93,7 @@ Changes to the notes, newest first. Older history: WORKLOG.md, worklog/ (before 
 Every agent that works in this repo claims it first, so that the work given to each is clear, also to sessions on another machine or in the cloud, and a lead sees at once when an agent has been on a task too long.
 
 - **Names.** Every agent has a stable name, and the claim file carries it: a lead is `lead-<area>`, a worker `w-<todo>-<k>` (its lead counts `k`), a standing or cloud session its session name (`m2850-classprep`). A subagent has only an id, so whoever starts it gives it its name in the brief.
-- **Claim:** before the first edit, create `claims/<name>.md` and commit it on its own. Push it if your session pushes, so that the others see it. One file per agent: claims never collide.
+- **Claim:** before the first edit, create `claims/<name>.md`, commit it on its own and push it, so that the others see it. Your claim file and your `LOG.md` bullets (section 2) are the only things you commit and push without Claudia's go (a100); everything else waits for her. If the push would carry earlier unpushed commits, or the session cannot push, leave the claim committed locally and say so in your report. One file per agent: claims never collide.
 - **What it says**, six lines in this form (a script reads them):
 
 ```
@@ -84,6 +105,6 @@ since: 2026-10-15 14:00
 until: 2026-10-15 18:00
 ```
 
-- **Before you claim, read `claims/`.** Do not write a path that another claim names; if you must, ask Claudia. Past `until` with no new commit from you: update `until` with a one-line reason in the claim, or release it. A claim past `until` or a day old is flagged to the lead and to Claudia; never delete another agent's claim.
-- **Release:** delete your claim file in the same commit as your last change, or at hand-off. A hand-off note goes in the repo's usual place, not in the claim.
+- **Before you claim, read `claims/`.** Do not write a path that another claim names; if you must, ask Claudia. Past `until`: update `until` with a one-line reason in the claim, or release it. A claim past `until` or a day old is flagged to the lead and to Claudia; never delete another agent's claim.
+- **Release:** at hand-off, delete your claim file in a commit of its own and push it, as for the claim. A hand-off note goes in the repo's usual place, not in the claim.
 - Claims are not the log: `LOG.md` records what changed, `claims/` who is working now.

@@ -1,0 +1,69 @@
+% notes-style.sty — the shared style of Claudia's research notes.
+% Shared file, copied from ~/github/aisystem/templates/research-repo/; edit it there, not here.
+% Use (from any folder of the repo):
+%   \documentclass[11pt,a4paper]{article}
+%   \makeatletter\def\input@path{{./}{../}{../../}{../../../}}\makeatother
+%   \usepackage{notes-style}
+%   \title{...}\date{...}
+% Repo-specific macros go in the note (or a repo macro file) after this line.
+\NeedsTeXFormat{LaTeX2e}
+% (no \ProvidesPackage: the file is found via \input@path, and the name check would warn)
+
+\RequirePackage{iftex}
+\ifPDFTeX
+  \RequirePackage[T1]{fontenc}
+  \RequirePackage[utf8]{inputenc}
+\fi
+\RequirePackage{lmodern}
+\RequirePackage{microtype}
+\RequirePackage[margin=1in]{geometry}
+\RequirePackage{amsmath,amssymb,amsthm,mathtools}
+\RequirePackage{booktabs,tabularx,array}
+\RequirePackage{enumitem}
+\RequirePackage{xcolor}
+\RequirePackage{tikz-cd}
+\RequirePackage[colorlinks=true,linkcolor=primary,citecolor=accent,urlcolor=primary]{hyperref}
+\RequirePackage[capitalise,noabbrev]{cleveref}
+
+\definecolor{primary}{RGB}{0,90,160}
+\definecolor{secondary}{RGB}{200,50,50}
+\definecolor{accent}{RGB}{0,140,70}
+\definecolor{lightgray}{RGB}{220,220,220}
+
+\setlength{\parskip}{0.5em}
+\setlength{\parindent}{0pt}
+\setlist{itemsep=0.2em,topsep=0.3em}
+\emergencystretch=2em
+
+\theoremstyle{plain}
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{corollary}[theorem]{Corollary}
+\newtheorem{conjecture}[theorem]{Conjecture}
+\theoremstyle{definition}
+\newtheorem{definition}[theorem]{Definition}
+\newtheorem{example}[theorem]{Example}
+\newtheorem{construction}[theorem]{Construction}
+\newtheorem{question}[theorem]{Question}
+\theoremstyle{remark}
+\newtheorem{remark}[theorem]{Remark}
+\newtheorem{warning}[theorem]{Warning}
+
+% Number sets (kept if the note defines its own first).
+\providecommand{\N}{\mathbb{N}}
+\providecommand{\Z}{\mathbb{Z}}
+\providecommand{\Q}{\mathbb{Q}}
+\providecommand{\R}{\mathbb{R}}
+\providecommand{\C}{\mathbb{C}}
+
+% Marks of NOTES-GUIDE section 4, the same in every repo.
+\newcommand{\NoteError}{\textbf{\textcolor{secondary}{[Error]}}}
+\newcommand{\NoteGap}{\textbf{\textcolor{secondary}{[Gap]}}}
+\newcommand{\NoteOpen}{\textbf{\textcolor{primary}{[Open]}}}
+\newcommand{\NoteClaudia}{\textbf{\textcolor{accent}{[Claudia]}}}
+\newcommand{\NoteTentative}{\textit{(tentative)}}
+
+% Status line under the title: \NoteStatus{proved | checked in ... | conjecture}.
+\newcommand{\NoteStatus}[1]{\par\noindent\textit{Status:} #1\par}
+\endinput

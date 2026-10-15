@@ -35,22 +35,31 @@ Changes to the notes, newest first. Older history: WORKLOG.md, worklog/ (before 
 
 ## 3. LaTeX essentials
 
-- Document: `\documentclass[11pt,a4paper]{article}` (`standalone` for figures), `microtype`, `\usepackage[margin=1in]{geometry}`, `[T1]{fontenc}` and `[utf8]{inputenc}` (or LuaLaTeX/XeLaTeX). Body font `lmodern`, or `newpxtext` with `newpxmath`. Math packages: `amsmath`, `amssymb`, `mathtools`.
-- Notes: `\setlength{\parskip}{0.5em}`, `\setlength{\parindent}{0pt}`. A long document puts each section in its own file, pulled in with `\input{section}` (or subfiles, if the repo already uses them). Keep the repo's existing preamble and macros.
+- **Every note uses the shared style `notes-style.sty`** at the repo root (copied from aisystem like this guide; never edit it here). It sets the fonts, margins, spacing, theorem environments, colours, `\N \Z \Q \R \C`, and the marks of section 4. A note starts:
+
+```latex
+\documentclass[11pt,a4paper]{article}
+\makeatletter\def\input@path{{./}{../}{../../}{../../../}}\makeatother
+\usepackage{notes-style}
+\title{Content title}\author{Yun Liu}\date{2026-10-15}
+```
+
+  Then `\maketitle`, and `\NoteStatus{...}` when the note is a result (proved, checked in ..., conjecture). Macros of this repo come after the `\usepackage` line; do not reload a package the style loads. A figure is `standalone`. Papers, and book annotations that live in the book's own source, keep their own preamble.
+- A long note puts each section in its own file, pulled in with `\input{section}` (or subfiles, if the repo already uses them).
 - Words in math go in `\text{if } x>0`, never `\mathrm{if}`.
 - Fractions: `\dfrac` in a display, `\tfrac` inline, never bare `\frac` inline.
 - Definitions: `f \coloneqq g` (mathtools), not `=`.
 - Displays: `\[...\]`, `equation*` or `align*`; never `eqnarray` or `$$`. No blank line inside an `align`. Text between lines: `\intertext{}`. Use `cases` for piecewise functions. Break a long equation before the operator (`=`, `+`), with the operator starting the new line.
 - Spacing: `\int_0^1 f(x)\, dx`; align items with `\quad` or `\qquad`, never `~` or `\ `. Use `\bigl(` and `\bigr)` when `\left`/`\right` space badly.
 - `\boxed` only for a key result or final answer.
-- Tables: `booktabs` (`\toprule`, `\midrule`, `\bottomrule`), never `\hline`; `siunitx` `S` columns for decimals; `tabularx` for flexible widths.
+- Tables: `booktabs` (`\toprule`, `\midrule`, `\bottomrule`), never `\hline` (the style loads booktabs and tabularx); `siunitx` `S` columns for decimals; `tabularx` for flexible widths.
 - Macros: `\newcommand`, never `\def`; never `\over` or `\centerline`. A value used often is a macro (`\R` for `\mathbb{R}`), defined once.
-- TikZ: load the needed libraries (`arrows.meta, calc, decorations.markings, patterns`); name each colour with `\definecolor` (three to five per document: primary 0,90,160; secondary 200,50,50; accent 0,140,70; lightgray 220,220,220); `Stealth` arrows, `thick` curves, `thin` grids; axis labels are `\node`s at the axis end. Export a standalone figure as PDF and PNG (`pdftoppm -png -r 300`).
+- TikZ: load the needed libraries (`arrows.meta, calc, decorations.markings, patterns`); use the colours the style defines (`primary`, `secondary`, `accent`, `lightgray`); `Stealth` arrows, `thick` curves, `thin` grids; axis labels are `\node`s at the axis end. Export a standalone figure as PDF and PNG (`pdftoppm -png -r 300`).
 - Emphasis in math is `\textcolor`, not bold. Build files and PDFs are not committed; a review PDF sits beside its source.
 
 ## 4. Marking and wording
 
-- **Source error vs gap.** An error is something in the source that is false or misstated: write what is wrong, the corrected statement, and why. A gap is a step the source skips or only sketches: fill it in full, mark it as filled, and say where the source stops. Mark both visibly and in the same way each time: `\textbf{[Error]}` / `\textbf{[Gap]}` in TeX (or the repo's existing macros, such as `\bookerr`, `\bookgap`), `**[Error]**` / `**[Gap]**` in Markdown. Mention each in the log.
-- **Open questions.** `**[Open]**` in the text, with the question stated in one sentence and what is known. Also list it under "Open" in the repo's status file, if there is one. A question that needs Claudia's decision is marked `**[Claudia]**` and carries a recommendation.
-- **Uncertainty.** If a source or speaker hedged, say so ("tentative: the speaker was unsure"); never upgrade a hedge to a claim. If only an abstract was read, say so.
+- **Source error vs gap.** An error is something in the source that is false or misstated: write what is wrong, the corrected statement, and why. A gap is a step the source skips or only sketches: fill it in full, mark it as filled, and say where the source stops. Mark both visibly and in the same way each time: `\NoteError` / `\NoteGap` in TeX (book annotations keep their repo's macros, such as `\bookerr`, `\bookgap`), `**[Error]**` / `**[Gap]**` in Markdown. Mention each in the log.
+- **Open questions.** `\NoteOpen` in the text, with the question stated in one sentence and what is known. Also list it under "Open" in the repo's status file, if there is one. A question that needs Claudia's decision is marked `\NoteClaudia` and carries a recommendation.
+- **Uncertainty.** If a source or speaker hedged, say so ("tentative: the speaker was unsure", `\NoteTentative`); never upgrade a hedge to a claim. If only an abstract was read, say so.
 - **Wording.** Plain and precise. State the hypotheses of a theorem where it is used. Name each item by its content ("the Ore condition", "Prop. C.4(iii)"), not by number alone. No filler, no slogans.

@@ -64,3 +64,24 @@ Changes to the notes, newest first. Older history: WORKLOG.md, worklog/ (before 
 - **Open questions.** `\NoteOpen` in the text, with the question stated in one sentence and what is known. Also list it under "Open" in the repo's status file, if there is one. A question that needs Claudia's decision is marked `\NoteClaudia` and carries a recommendation.
 - **Uncertainty.** If a source or speaker hedged, say so ("tentative: the speaker was unsure", `\NoteTentative`); never upgrade a hedge to a claim. If only an abstract was read, say so.
 - **Wording.** Plain and precise. State the hypotheses of a theorem where it is used. Name each item by its content ("the Ore condition", "Prop. C.4(iii)"), not by number alone. No filler, no slogans.
+
+## 5. Claims: who works here now
+
+Every agent that works in this repo claims it first, so that the work given to each is clear, also to sessions on another machine or in the cloud, and a lead sees at once when an agent has been on a task too long.
+
+- **Names.** Every agent has a stable name, and the claim file carries it: a lead is `lead-<area>`, a worker `w-<todo>-<k>` (its lead counts `k`), a standing or cloud session its session name (`m2850-classprep`). A subagent has only an id, so whoever starts it gives it its name in the brief.
+- **Claim:** before the first edit, create `claims/<name>.md` and commit it on its own. Push it if your session pushes, so that the others see it. One file per agent: claims never collide.
+- **What it says**, six lines in this form (a script reads them):
+
+```
+agent: w-t135-2 (Mac)
+branch: main
+task: convert the reading notes to LaTeX
+writes: notes/, LOG.md
+since: 2026-10-15 14:00
+until: 2026-10-15 18:00
+```
+
+- **Before you claim, read `claims/`.** Do not write a path that another claim names; if you must, ask Claudia. Past `until` with no new commit from you: update `until` with a one-line reason in the claim, or release it. A claim past `until` or a day old is flagged to the lead and to Claudia; never delete another agent's claim.
+- **Release:** delete your claim file in the same commit as your last change, or at hand-off. A hand-off note goes in the repo's usual place, not in the claim.
+- Claims are not the log: `LOG.md` records what changed, `claims/` who is working now.

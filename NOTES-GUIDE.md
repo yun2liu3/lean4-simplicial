@@ -6,9 +6,10 @@ How notes are written and logged in this repo. Claudia is a mathematician; the n
 
 ## 1. Organise by content
 
-- One file per topic or section (a paper's section, a chapter, one idea). Name the file by its content, not by date: `notes/join-flow-categories.md`, not `notes/2026-10-12-stuff.md`.
+- **Notes Claudia reads are LaTeX (`.tex`); Markdown is only for logs and plumbing.** Notes: topic notes, meeting notes, surveys, reading notes, reports and checks written for her. Markdown: `LOG.md` and other logs, agent briefs, reviews, audit reports and hand-offs, README, CLAUDE.md, AGENTS.md, conventions and plans, and text meant for pasting (a WhatsApp message). One version of each note: no `.md` twin beside a `.tex`.
+- One file per topic or section (a paper's section, a chapter, one idea). Name the file by its content, not by date: `notes/join-flow-categories.tex`, not `notes/2026-10-12-stuff.tex`.
 - When the mathematics changes, revise the file in place. Never save a dated copy of a note (`note_v2`, `note_2026-10-12`). Git keeps the old version; the log says what changed.
-- Exceptions that keep a date: meeting notes (`meetings/YYYY-MM-DD-notes.md`) and talk notes (dated by the talk). They are records of an event; once written, change them only to correct an error, and log the correction.
+- Exceptions that keep a date: meeting notes (`meetings/YYYY-MM-DD-notes.tex`) and talk notes (dated by the talk). They are records of an event; once written, change them only to correct an error, and log the correction.
 - Never edit a source (book text, paper) except in the layers the repo reserves for Claudia's notes. PDFs are never committed.
 - A claim is one of: proved (give the proof or reference), checked (say in which examples or by which second method), or conjecture. Never state a conjecture as a result.
 - Cite with a pointer: paper, section and statement number (Thm 3.4), not just the title.
@@ -24,8 +25,8 @@ Changes to the notes, newest first. Older history: WORKLOG.md, worklog/ (before 
 
 ## 2026-10-15
 
-- `notes/permutative-and-group-completion.md`, group completion theorem: replaced the vague Ore-type hypothesis by the left Ore condition of Nikolaus, Thm 1 (the old hypothesis was not enough for the proof).
-- `meetings/2026-10-08-notes.md`, claim about Fix: marked as tentative (the speaker hedged).
+- `notes/permutative-and-group-completion.tex`, group completion theorem: replaced the vague Ore-type hypothesis by the left Ore condition of Nikolaus, Thm 1 (the old hypothesis was not enough for the proof).
+- `meetings/2026-10-08-notes.tex`, claim about Fix: marked as tentative (the speaker hedged).
 ```
 
 - The first entry of a new `LOG.md` points to the older logs of the repo (CHANGES.md, WORKLOG.md, `worklog/`, `logs/`, `log/`, STATUS.md history). They stay where they are as history; nothing is moved or rewritten.

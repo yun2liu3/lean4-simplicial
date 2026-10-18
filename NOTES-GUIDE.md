@@ -6,7 +6,7 @@ How notes are written and logged in this repo. Claudia is a mathematician; the n
 
 Instructions in every research repo have one layout: `AGENTS.md` is the entry for every agent, whatever its engine, and names this guide and the repo's own rule files (conventions, README, status, briefs); `CLAUDE.md` holds only `@` lines that load them (`@AGENTS.md`, `@NOTES-GUIDE.md`, and a rule file it must always see). Rules live in one place; a new rule file gets a line in `AGENTS.md`.
 
-When two instructions differ, the first of these wins: Claudia's words in the session, the hard rules at the top of `AGENTS.md`, the todo brief, this repo's own files (its `AGENTS.md`, conventions, briefs), this guide, and last the global defaults (such as `~/.claude/rules/latex.md`, whose page layout and colours `notes-style.sty` replaces for notes).
+When two instructions differ, the first of these wins: your allocator's prompt (it comes from Claudia's words), the hard rules at the top of `AGENTS.md`, the todo brief, this repo's own files (its `AGENTS.md`, conventions, briefs), this guide, and last the global defaults (such as `~/.claude/rules/latex.md`, whose page layout and colours `notes-style.sty` replaces for notes).
 
 ## 1. Organise by content
 
@@ -20,9 +20,9 @@ When two instructions differ, the first of these wins: Claudia's words in the se
 
 ## 2. The log: `LOG.md` at the repo root
 
-One format in every repo. Dated entries, newest first. A date heading `## YYYY-MM-DD`, then one bullet per change: `file or section: what changed (why)`. Add the bullet when you make the change; a second change on the same day goes under that day's heading, not a new one. Do not edit old entries, except to fix a wrong path.
+One format in every repo. Dated entries, newest first. A date heading `## YYYY-MM-DD`, then one bullet per change: `file or section: what changed (why)`. A second change on the same day goes under that day's heading, not a new one. Do not edit old entries, except to fix a wrong path.
 
-**Committing (Claudia's decision a100, 2026-10-15).** You may commit and push your own `LOG.md` bullets without asking, in a commit that holds nothing else (stage only your lines: `git add -p LOG.md`). The change a bullet describes stays uncommitted until Claudia asks, like everything else in the repo. A push that would carry anyone's earlier unpushed commits waits for her.
+**Who writes it and commits (rule 3o; overrides a100's LOG.md bullets).** Workers never write `LOG.md`: each writes its bullets, with the detail, in its hand-back. The lead writes the summary, and that is what goes into `LOG.md`. The repo's orchestrator commits it with the change, once the reviewers pass and its lead, if any, agrees, and pushes after Claudia accepts. Nobody else commits.
 
 ```
 # Log
@@ -90,21 +90,23 @@ Changes to the notes, newest first. Older history: WORKLOG.md, worklog/ (before 
 
 ## 5. Claims: who works here now
 
-Every agent that works in this repo claims it first, so that the work given to each is clear, also to sessions on another machine or in the cloud, and a lead sees at once when an agent has been on a task too long.
+Every agent that works in this repo claims it first, so that the work given to each is clear, also to sessions on another machine or in the cloud, and its allocator sees at once when an agent has been on a task too long. Claim only the work your allocator gave you in your prompt.
 
-- **Names.** Every agent has a stable name, and the claim file carries it: a lead is `lead-<area>`, a worker `w-<todo>-<k>` (its lead counts `k`), a standing or cloud session its session name (`m2850-classprep`). A subagent has only an id, so whoever starts it gives it its name in the brief.
-- **Claim:** before the first edit, create `claims/<name>.md`, commit it on its own and push it, so that the others see it. Your claim file and your `LOG.md` bullets (section 2) are the only things you commit and push without Claudia's go (a100); everything else waits for her. If the push would carry earlier unpushed commits, or the session cannot push, leave the claim committed locally and say so in your report. One file per agent: claims never collide.
-- **What it says**, six lines in this form (a script reads them):
+- **Names.** A name is exactly one of `orch-<repo>`, `lead-<area>`, `w-<tNNN>-<k>`, `r-<tNNN>-<k>` (the allocator counts `k` per todo), unique, and given by your allocator in your prompt; for example `w-t135-2`. An agent never names itself: one with no name asks its allocator.
+- **Claim:** before the first edit, create `claims/<name>.md`, commit it on its own and push it, so that the others see it. It counts only once pushed: if the push is rejected, fetch, read `claims/` again and retry. Your claim file, and its deletion at hand-off, are the only things you commit and push yourself; everything else is committed by the orchestrator (section 2). If the session cannot push, say so to your allocator. One file per agent: claims never collide.
+- **What it says**, seven lines in this form (a script reads them):
 
 ```
-agent: w-t135-2 (Mac)
-branch: main
+agent: w-t135-2 (MacBook)
+allocator: lead-notes
+branch: macbook/reading-notes
 task: convert the reading notes to LaTeX
-writes: notes/, LOG.md
+writes: notes/
 since: 2026-10-15 14:00
 until: 2026-10-15 18:00
 ```
 
-- **Before you claim, read `claims/`.** Do not write a path that another claim names; if you must, ask Claudia. Past `until`: update `until` with a one-line reason in the claim, or release it. A claim past `until` or a day old is flagged to the lead and to Claudia; never delete another agent's claim.
+- **Before you claim, read `claims/`.** If you need a path another claim names, stop and tell your allocator, who decides. Past `until`: update `until` with a one-line reason in the claim, or release it. A claim past `until` or a day old is flagged to its allocator only; never delete another agent's claim. A claim untouched for 7 days lapses and is listed for Claudia; nobody takes it over on their own.
 - **Release:** at hand-off, delete your claim file in a commit of its own and push it, as for the claim. A hand-off note goes in the repo's usual place, not in the claim.
+- **Two machines (rule 2e).** On the MacBook, notes work goes often to the working branch `macbook/<topic>`; for now the agent that allocated the work (its orchestrator or lead) pushes it, and who does this is open for Claudia. "Push after accept" concerns `main`: it changes only when Claudia accepts, merged by the hub's orchestrator on the Mac Mini. Commits from both machines use `49599185+yun2liu3@users.noreply.github.com` and a `Machine:` trailer.
 - Claims are not the log: `LOG.md` records what changed, `claims/` who is working now.

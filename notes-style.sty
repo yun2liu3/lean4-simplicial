@@ -12,6 +12,9 @@
 % Compiles with pdfLaTeX (Palatino via mathpazo) or XeLaTeX/LuaLaTeX (TeX Gyre Pagella).
 \NeedsTeXFormat{LaTeX2e}
 % (no \ProvidesPackage: the file is found via \input@path, and the name check would warn)
+% Loaded once only, and theorem names defined earlier (e.g. by an Overleaf main file) are kept.
+\ifdefined\notesstyle@loaded\expandafter\endinput\fi
+\def\notesstyle@loaded{}
 
 % ---------------------------------------------------------------- page
 \RequirePackage[textwidth=33pc,textheight=47\baselineskip,top=1.05in,
@@ -81,24 +84,36 @@
   \end{center}\vspace{1.2\baselineskip}}
 
 % ---------------------------------------------------------------- theorems
-\RequirePackage{thmtools}
-\declaretheoremstyle[headfont=\scshape\color{accent},bodyfont=\normalfont,
-  notefont=\normalfont\itshape,notebraces={(}{)},headpunct={.},
-  spaceabove=0.7\baselineskip,spacebelow=0.7\baselineskip]{note}
-\declaretheoremstyle[headfont=\itshape,bodyfont=\normalfont,headpunct={.},
-  spaceabove=0.6\baselineskip,spacebelow=0.6\baselineskip]{aside}
-\declaretheorem[style=note,name=Theorem,numberwithin=section]{theorem}
-\declaretheorem[style=note,name=Proposition,sibling=theorem]{proposition}
-\declaretheorem[style=note,name=Lemma,sibling=theorem]{lemma}
-\declaretheorem[style=note,name=Corollary,sibling=theorem]{corollary}
-\declaretheorem[style=note,name=Conjecture,sibling=theorem]{conjecture}
-\declaretheorem[style=note,name=Definition,sibling=theorem]{definition}
-\declaretheorem[style=note,name=Construction,sibling=theorem]{construction}
-\declaretheorem[style=note,name=Question,sibling=theorem]{question}
-\declaretheorem[style=aside,name=Example,sibling=theorem]{example}
-\declaretheorem[style=aside,name=Remark,sibling=theorem]{remark}
-\declaretheorem[style=aside,name=Warning,sibling=theorem]{warning}
-\declaretheorem[style=aside,name=Computation,sibling=theorem]{computation}
+% amsthm only (thmtools' sibling key made Overleaf define \c@proposition twice); a name defined
+% earlier, e.g. by an Overleaf main file, is kept with a warning.
+\newtheoremstyle{note}{0.7\baselineskip}{0.7\baselineskip}{\normalfont}{}{\scshape\color{accent}}{.}{ }
+  {\thmname{#1}\thmnumber{ #2}\thmnote{ {\normalfont\itshape(#3)}}}
+\newtheoremstyle{aside}{0.6\baselineskip}{0.6\baselineskip}{\normalfont}{}{\itshape}{.}{ }{}
+\newcommand\notesstyle@kept[1]{\PackageWarningNoLine{notes-style}{`#1' was already defined; the earlier one is kept}}
+\newcommand\notesstyle@thm[3]{\@ifundefined{#2}{\@ifundefined{c@#2}%
+    {\theoremstyle{#1}\newtheorem{#2}[theorem]{#3}}{\notesstyle@kept{#2}}}{\notesstyle@kept{#2}}}
+\@ifundefined{theorem}{\@ifundefined{c@theorem}%
+    {\theoremstyle{note}\newtheorem{theorem}{Theorem}[section]}%
+    {\let\notesstyle@thethm\thetheorem % a bare counter: number with it; amsthm would make
+     \theoremstyle{note}\newtheorem{theorem}[theorem]{Theorem}% \thetheorem call itself,
+     \let\thetheorem\notesstyle@thethm}}% so its format is put back
+  {\notesstyle@kept{theorem}}
+% The siblings below number with the counter `theorem'. An earlier unnumbered theorem
+% (\newtheorem*{theorem}) made none, and amsthm would stop with "No counter": make it here.
+\@ifundefined{c@theorem}{\newcounter{theorem}[section]%
+  \renewcommand{\thetheorem}{\thesection.\arabic{theorem}}}{}
+\notesstyle@thm{note}{proposition}{Proposition}
+\notesstyle@thm{note}{lemma}{Lemma}
+\notesstyle@thm{note}{corollary}{Corollary}
+\notesstyle@thm{note}{conjecture}{Conjecture}
+\notesstyle@thm{note}{definition}{Definition}
+\notesstyle@thm{note}{construction}{Construction}
+\notesstyle@thm{note}{question}{Question}
+\notesstyle@thm{aside}{example}{Example}
+\notesstyle@thm{aside}{remark}{Remark}
+\notesstyle@thm{aside}{warning}{Warning}
+\notesstyle@thm{aside}{computation}{Computation}
+\theoremstyle{plain}
 \renewcommand{\qedsymbol}{\textcolor{rule}{\rule{0.5em}{0.5em}}}
 \renewenvironment{proof}[1][\proofname]{\par\pushQED{\qed}\normalfont
   \topsep0.4\baselineskip\relax\trivlist\item[\hskip\labelsep\itshape#1.]\ignorespaces}

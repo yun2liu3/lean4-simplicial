@@ -5,3 +5,4 @@
 *.pdf
 # Review document: names files of the private source repository. Keep untracked unless Claudia decides otherwise.
 MERGE-MANIFEST.md
+.rounds/

@@ -22,7 +22,7 @@ When two instructions differ, the first of these wins: your allocator's prompt (
 
 One format in every repo. Dated entries, newest first. A date heading `## YYYY-MM-DD`, then one bullet per change: `file or section: what changed (why)`. A second change on the same day goes under that day's heading, not a new one. Do not edit old entries, except to fix a wrong path.
 
-**Who writes it and commits (rule 3o; overrides a100's LOG.md bullets).** Workers never write `LOG.md`: each writes its bullets, with the detail, in its hand-back. The lead writes the summary, and that is what goes into `LOG.md`. The repo's orchestrator commits it with the change, once the reviewers pass and its lead, if any, agrees, and pushes after Claudia accepts. Nobody else commits.
+**Who writes it and commits (rule 3o; overrides a100's LOG.md bullets).** Workers never write `LOG.md`; they put detail in their hand-back. The lead checks the TLDR, and at the builder's PASS `dispatch.py` writes it as one bullet in the format below, with the todo id at the end as a record key. The repo's orchestrator commits it with the change, once the reviewers pass and its lead, if any, agrees, and pushes after Claudia accepts. Nobody else commits.
 
 ```
 # Log
@@ -32,9 +32,10 @@ Changes to the notes, newest first. Older history: WORKLOG.md, worklog/ (before 
 ## 2026-10-15
 
 - `notes/permutative-and-group-completion.tex`, group completion theorem: replaced the vague Ore-type hypothesis by the left Ore condition of Nikolaus, Thm 1 (the old hypothesis was not enough for the proof).
-- `meetings/2026-10-08-notes.tex`, claim about Fix: marked as tentative (the speaker hedged).
+- `meetings/2026-10-08-notes.tex`, claim about Fix: marked as tentative (the speaker hedged) · tNNN
 ```
 
+- In a research repo that already has `LOG.md`, PASS writes one bullet there and creates no `WORKLOG.md`. Other repos keep the `WORKLOG.md` record. The bullet ends with `· tNNN` so the script can keep one record for that todo: revise/reject removes it, undo restores it, and a later PASS writes the single current bullet. Review notes stay in the todo discussion.
 - The first entry of a new `LOG.md` points to the older logs of the repo (CHANGES.md, WORKLOG.md, `worklog/`, `logs/`, `log/`, STATUS.md history). They stay where they are as history; nothing is moved or rewritten.
 - `.gitattributes` holds `LOG.md merge=union`, so two branches that each add bullets merge without a conflict. After such a merge, check that the bullets of one day sit under one heading.
 - Name each change by its content ("replaced the Ore hypothesis"), never by a task or round number.
@@ -70,6 +71,7 @@ Changes to the notes, newest first. Older history: WORKLOG.md, worklog/ (before 
   - **Meeting notes:** `\notekind{Meeting notes}`, title by content, the date of the meeting in `\date`, the people in `\author`. The summary box is titled `[Decisions and next steps]`. Sections: what was discussed (one per topic), claims made (tentative ones marked), next steps with who does what.
   - **Literature maps, changelogs:** the same header and summary box; tables with `booktabs` (`longtable` for long ones).
 - A long note puts each section in its own file, pulled in with `\input{section}` (or subfiles, if the repo already uses them).
+- **Citing another chapter is always a macro, never bare text** (2026-10-23), so that `bin/chapter_deps.py` can read the dependencies between chapters and jobs run in their order. In a book numbered globally (Vakil: 12.1.4) use `\bkref{12.1.4}`; in a book numbered chapter by chapter (Anderson–Fulton, Silverman) use `\bkxref{N}{4.1}`, defined once in the repo's macros as `\newcommand{\bkxref}[2]{\hyperref[bk:#1.#2]{Ch.\,#1, #2}}`. When you touch a passage with a bare book number or "Chapter N" pointing elsewhere, convert it.
 - Words in math go in `\text{if } x>0`, never `\mathrm{if}`.
 - Fractions: `\dfrac` in a display, `\tfrac` inline, never bare `\frac` inline.
 - Definitions: `f \coloneqq g` (mathtools), not `=`.

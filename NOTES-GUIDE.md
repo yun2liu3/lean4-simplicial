@@ -50,6 +50,9 @@ Changes to the notes, newest first. Older history: WORKLOG.md, worklog/ (before 
 \documentclass[11pt,a4paper]{article}
 \makeatletter\def\input@path{{./}{../}{../../}{../../../}}\makeatother
 \usepackage{notes-style}
+% Intuition layer (openings, bridges, intuition boxes): ON. For the precise version, statements
+% and proofs only, uncomment the next line, or build with: pdflatex '\def\notesprecisebuild{}\input{main}'
+% \notesprecise
 % this note's macros
 \title{Content title}\author{Yun Liu}\date{15 October 2026}
 \notekind{Working note}          % or: Meeting notes, Reading notes, Literature map, Changelog, Talk notes

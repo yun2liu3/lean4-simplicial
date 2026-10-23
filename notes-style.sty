@@ -129,11 +129,25 @@
 \newtcolorbox{summarybox}[1][Summary]{enhanced,breakable,colback=wash,colframe=wash,boxrule=0pt,arc=1pt,
   left=1.1em,right=1.1em,top=0.7em,bottom=0.7em,fontupper=\small,
   title={#1.},fonttitle=\small\scshape,coltitle=accent,colbacktitle=wash,attach title to upper={\ }}
-% \begin{intuition}[title] ... \end{intuition}: an explanation or a picture added to a statement.
-\newtcolorbox{intuition}[1][]{enhanced,breakable,colback=anscol!6,colframe=anscol,coltext=black!85,
-  boxrule=0pt,leftrule=1.5pt,arc=0pt,left=6pt,right=6pt,top=3pt,bottom=3pt,
-  fonttitle=\small\scshape,coltitle=anscol,colbacktitle=anscol!6,attach title to upper={\ },
-  title={Intuition\ifx&#1&\else\ \normalfont(#1)\fi.}}
+% The intuition layer (2026-10-23). Statements and proofs are the precise core and always print;
+% the layer carries what helps understanding, and the core must read cleanly without it:
+%   \begin{intuition}[title] ... \end{intuition}  an explanation or a picture added to a statement
+%   \begin{opening} ... \end{opening}             at the start of a chapter or note: the picture first
+%   \begin{bridge} ... \end{bridge}               between sections, or connecting results
+% \notesprecise in the preamble drops the layer (the precise build); so does building with
+%   pdflatex '\def\notesprecisebuild{}\input{main}'
+% without touching the file, so both versions come from one source.
+\newif\ifnotes@intuition \notes@intuitiontrue
+\newcommand{\notesprecise}{\notes@intuitionfalse}
+\AtBeginDocument{\ifdefined\notesprecisebuild\notes@intuitionfalse\fi}
+\newcommand{\@noteslayerbox}[3]{\newtcolorbox{#1@box}[1][]{enhanced,breakable,colback=#2!6,colframe=#2,
+  coltext=black!85,boxrule=0pt,leftrule=1.5pt,arc=0pt,left=6pt,right=6pt,top=3pt,bottom=3pt,
+  fonttitle=\small\scshape,coltitle=#2,colbacktitle=#2!6,attach title to upper={\ },
+  title={#3\ifx&##1&\else\ \normalfont(##1)\fi.}}%
+  \NewDocumentEnvironment{#1}{O{}+b}{\ifnotes@intuition\begin{#1@box}[##1]##2\end{#1@box}\fi}{}}
+\@noteslayerbox{intuition}{anscol}{Intuition}
+\@noteslayerbox{opening}{anscol}{The picture}
+\@noteslayerbox{bridge}{anscol}{Where we are}
 % Longer marks, as boxes with the colour of their tag: \begin{errornote} / gapnote / opennote.
 \newcommand{\@notesmarkbox}[3]{\newtcolorbox{#1}[1][]{enhanced,breakable,colback=#2!5,colframe=#2,
   coltext=black!90,boxrule=0pt,leftrule=1.5pt,arc=0pt,left=6pt,right=6pt,top=3pt,bottom=3pt,

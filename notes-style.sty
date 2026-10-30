@@ -52,6 +52,12 @@
 \definecolor{rule}{RGB}{190,198,210}      % quiet lines, the qed square
 \definecolor{wash}{RGB}{244,246,250}      % summary box background
 \definecolor{lightgray}{RGB}{220,220,220}
+% Status of a result (notestatus, \NoteTag): one meaning per colour, shared with the marks.
+%   proved: provedc; given inputs: givenc; checked: anscol; claimed, not verified: claimc;
+%   false: secondary; open: qcol. Definitions in dependency graphs: accent.
+\definecolor{provedc}{RGB}{0,125,70}     % green: proved
+\definecolor{givenc}{RGB}{196,112,0}     % amber: proved, given named inputs
+\definecolor{claimc}{RGB}{105,105,105}   % gray: claimed, not verified
 \RequirePackage{tikz-cd}
 
 % ---------------------------------------------------------------- headings and page head
@@ -113,6 +119,15 @@
 \notesstyle@thm{aside}{remark}{Remark}
 \notesstyle@thm{aside}{warning}{Warning}
 \notesstyle@thm{aside}{computation}{Computation}
+% Internal heads of the status boxes (below): numbered with `theorem', no bar of their own.
+\notesstyle@thm{note}{claim}{Claim}
+\newtheorem{notesst@theorem}[theorem]{Theorem}
+\newtheorem{notesst@proposition}[theorem]{Proposition}
+\newtheorem{notesst@lemma}[theorem]{Lemma}
+\newtheorem{notesst@corollary}[theorem]{Corollary}
+\newtheorem{notesst@conjecture}[theorem]{Conjecture}
+\newtheorem{notesst@claim}[theorem]{Claim}
+\newtheorem{notesst@question}[theorem]{Question}
 \theoremstyle{plain}
 \renewcommand{\qedsymbol}{\textcolor{rule}{\rule{0.5em}{0.5em}}}
 \renewenvironment{proof}[1][\proofname]{\par\pushQED{\qed}\normalfont
@@ -178,6 +193,7 @@
 \crefname{conjecture}{Conjecture}{Conjectures}
 \crefname{question}{Question}{Questions}
 \crefname{warning}{Warning}{Warnings}
+\crefname{claim}{Claim}{Claims}
 
 % ---------------------------------------------------------------- notation
 % Number sets (kept if the note defines its own first).
@@ -195,4 +211,71 @@
 \newcommand{\NoteTentative}{\textit{\textcolor{gray}{(tentative)}}}
 % Status line under the title: \NoteStatus{proved | checked in ... | conjecture}.
 \newcommand{\NoteStatus}[1]{\par\noindent{\small\scshape\color{accent}Status.}\ #1\par\medskip}
+
+% ---------------------------------------------------------------- status of results (2026-10-29)
+% Every stated result sits in one box that names its status in a word and a colour:
+%   \begin{notestatus}{STATUS}{HEAD}[title, source pointer] ... \label{...} ... \end{notestatus}
+% STATUS: proved     proved, unconditionally on the stated range        PROVED          green
+%         given      proved, given inputs named in the statement        GIVEN INPUTS    amber
+%         checked    checked: say in which cases or by which script     CHECKED         teal
+%         claimed    claimed or conjectured, not verified               CLAIMED         gray
+%         disproved  false: say what is false and the counterexample   FALSE           red
+%         open       an open question                                   OPEN            violet
+% HEAD: theorem proposition lemma corollary conjecture claim question (numbered with theorem;
+% \cref names the head). A result whose parts differ in status is split into consecutive boxes.
+% \NoteTag{STATUS}: the same tag inline (tables, summaries). Definitions stay in `definition'.
+\newcommand\notes@stdef[4]{\@namedef{notes@stcol@#1}{#2}\@namedef{notes@sttag@#1}{#3}%
+  \@namedef{notes@stshort@#1}{#4}}
+\notes@stdef{proved}{provedc}{PROVED}{PROVED}
+\notes@stdef{given}{givenc}{PROVED, GIVEN INPUTS}{GIVEN INPUTS}
+\notes@stdef{checked}{anscol}{CHECKED}{CHECKED}
+\notes@stdef{claimed}{claimc}{CLAIMED, NOT VERIFIED}{CLAIMED}
+\notes@stdef{disproved}{secondary}{FALSE}{FALSE}
+\notes@stdef{open}{qcol}{OPEN}{OPEN}
+\newcommand\notes@stcheck[1]{\@ifundefined{notes@stcol@#1}{\PackageError{notes-style}%
+  {Unknown status `#1'}{Use proved, given, checked, claimed, disproved or open.}%
+  \notes@stdef{#1}{claimc}{UNKNOWN STATUS}{UNKNOWN}}{}}
+\newcommand\notes@hdcheck[1]{\@ifundefined{notesst@#1}{\PackageError{notes-style}%
+  {Unknown head `#1'}{Use theorem, proposition, lemma, corollary, conjecture, claim or question.}%
+  \expandafter\let\csname notesst@#1\endcsname\notesst@claim
+  \expandafter\let\csname endnotesst@#1\endcsname\endnotesst@claim}{}}
+\newtcolorbox{notes@stbox}[2]{enhanced,breakable,colback=#1!6,colframe=#1,boxrule=0pt,
+  leftrule=2.4pt,arc=0pt,left=7pt,right=7pt,top=11pt,bottom=4pt,before skip=0.9\baselineskip,
+  after skip=0.9\baselineskip,overlay unbroken and first={\node[anchor=north east,inner sep=2.2pt,
+  font=\scriptsize\sffamily\bfseries,text=white,fill=#1] at (frame.north east) {#2};}}
+\NewDocumentEnvironment{notestatus}{m m o}
+  {\notes@stcheck{#1}\notes@hdcheck{#2}%
+   \begin{notes@stbox}{\@nameuse{notes@stcol@#1}}{\@nameuse{notes@sttag@#1}}\crefalias{theorem}{#2}%
+   \IfNoValueTF{#3}{\begin{notesst@#2}}{\begin{notesst@#2}[#3]}}
+  {\end{notesst@#2}\end{notes@stbox}}
+\newcommand{\NoteTag}[1]{\notes@stcheck{#1}{\scriptsize\sffamily\bfseries
+  \colorbox{\@nameuse{notes@stcol@#1}}{\textcolor{white}{\@nameuse{notes@stshort@#1}}}}}
+
+% \begin{planbox} ... \end{planbox}: right after \section in a note of several modules: in 4-8
+% plain lines, what the section does and why, its objects in order, what it uses from earlier
+% sections and what later ones use from it (\cref). Core text: it prints in the precise build.
+\newtcolorbox{planbox}[1][Plan of this section]{enhanced,breakable,colback=wash,colframe=accent,
+  boxrule=0pt,leftrule=1.5pt,arc=0pt,left=7pt,right=7pt,top=4pt,bottom=4pt,fonttitle=\small\scshape,
+  coltitle=accent,colbacktitle=wash,attach title to upper={\ },title={#1.}}
+
+% Dependency graphs (TikZ), one per module: definitions are `dep def' nodes, results `dep=STATUS'
+% nodes in their status colour, inputs from earlier sections add `dep earlier', arrows `dep use'
+% run from what is used to what uses it. Only these colours.
+\tikzset{
+  dep def/.style={draw=accent,rectangle,fill=white,align=center,minimum height=.85cm},
+  dep/.style={draw=\@nameuse{notes@stcol@#1},fill=\@nameuse{notes@stcol@#1}!12,rounded corners=3pt,
+    align=center,minimum height=.85cm},
+  dep earlier/.style={dashed},
+  dep use/.style={-Stealth,thin,draw=accent}}
+
+% \notefig{fig-name}{caption}{what you are looking at}: a standalone figure (the note loads
+% standalone), captioned "Figure N (added): caption" with the line "What you are looking at: ...".
+% \notefig* is for a figure taken from a source: "Figure N: caption (source pointer)".
+\DeclareCaptionLabelFormat{notesadded}{#1 #2 (added)}
+\NewDocumentCommand{\notefig}{s m m m}{\par\medskip\noindent
+  \begin{minipage}{\linewidth}\centering
+  \ifdefined\includestandalone\includestandalone[mode=tex]{#2}\else
+    \PackageError{notes-style}{\string\notefig\space needs \string\usepackage{standalone}}{}\fi\par
+  \IfBooleanTF{#1}{\captionsetup{hypcap=false,justification=centering,labelsep=colon}}{\captionsetup{hypcap=false,justification=centering,labelformat=notesadded,labelsep=colon}}%
+  \captionof{figure}[#3]{#3\newline \emph{What you are looking at:} #4}\end{minipage}\par\medskip}
 \endinput
